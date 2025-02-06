@@ -6,6 +6,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["tracing"]
 }
 
 datasource db {
@@ -17,12 +18,14 @@ model Budget {
   id          Int      @id @default(autoincrement())
   description String?
   type        Boolean  @default(true)
-  amount      Decimal
-  categories  String
+  amount      Int
+  category    Category? @relation(fields: [catId], references: [id])
+  catId       Int?
   createdAt   DateTime @default(now())
   updateAt    DateTime @updatedAt
   user        User?    @relation(fields: [userId], references: [id])
   userId      Int?
+  date        DateTime @default(now())
 }
 
 model User {
@@ -30,6 +33,16 @@ model User {
   name      String
   email     String   @unique
   password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Budget Budget[]
+}
+
+model Category {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  maxAmount Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

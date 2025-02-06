@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Budget } from '@prisma/client';
-import { Decimal } from '@prisma/client/runtime/library';
+import { CategoryEntity } from 'src/categories/entities/category.entity';
 import { UserEntity } from 'src/users/entities/user.entity';
 
 export class BudgetEntity implements Budget {
@@ -14,7 +14,7 @@ export class BudgetEntity implements Budget {
   categories: string;
 
   @ApiProperty()
-  amount: Decimal;
+  amount: number;
 
   @ApiProperty()
   type: boolean;
@@ -28,20 +28,23 @@ export class BudgetEntity implements Budget {
   @ApiProperty({ required: false, nullable: true })
   userId: number | null;
 
+  @ApiProperty({ required: false, nullable: true })
+  catId: number | null;
+
+  @ApiProperty({ required: false, type: CategoryEntity })
+  Categories?: CategoryEntity;
 
   @ApiProperty({ required: false, type: UserEntity })
-
   user?: UserEntity;
 
-  constructor({ user, ...data }: Partial<BudgetEntity>) {
+  @ApiProperty()
+  date: Date;
 
+  constructor({ user, ...data }: Partial<BudgetEntity>) {
     Object.assign(this, data);
 
     if (user) {
-
       this.user = new UserEntity(user);
-
     }
-
   }
 }

@@ -27,9 +27,13 @@ export default tseslint.config(
   },
   {
     rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'warn', 
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'warn',
-      '@typescript-eslint/no-unsafe-argument': 'warn'
+      '@typescript-eslint/no-unsafe-argument': 'warn',
+      // '@typescript-eslint/no-explicit-any': 'error',
+      // '@typescript-eslint/explicit-function-return-type': 'error',
+      // '@typescript-eslint/explicit-module-boundary-types': 'error',
     },
   },
 );

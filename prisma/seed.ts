@@ -1,60 +1,143 @@
 import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
+const roundsOfHashing = 10;
 
-async function main() {
-  // Upsert user
-  const user1 = await prisma.user.upsert({
-    where: { email: 'kevin@kevin.com' },
+async function main(): Promise<void> {
+  const passwordHash = await bcrypt.hash('P@ssw0rd', roundsOfHashing);
+
+  const categories = await prisma.category.upsert({
+    where: { name: 'Penggajian' },
     update: {},
     create: {
-      email: 'kevin@kevin.com',
-      name: 'Kevin Krisma',
-      password: 'P@ssw0rd',
+      name: 'Penggajian',
+      maxAmount: 200000000,
     },
   });
 
-  // Cek apakah budget sudah ada, jika tidak buat baru
-  const budget1 = await prisma.budget.findUnique({ where: { id: 1 } });
-  if (!budget1) {
-    await prisma.budget.create({
-      data: {
-        id: 1,
-        description: 'Prisma Adds Support for MongoDB',
-        type: true,
-        amount: '2000.00', // Decimal harus dalam bentuk string
-        categories: 'new area',
-        userId: user1.id,
-      },
-    });
-  }
+  const category1 = await prisma.category.upsert({
+    where: { name: 'Rumah' },
+    update: {},
+    create: {
+      name: 'Rumah',
+      maxAmount: 2000000,
+    },
+  });
 
-  const budget2 = await prisma.budget.findUnique({ where: { id: 2 } });
-  if (!budget2) {
-    await prisma.budget.create({
-      data: {
-        id: 2,
-        description: "What's new in Prisma? (Q1/22)",
-        type: false,
-        amount: '1500.50',
-        categories: 'updates',
-        userId: user1.id,
-      },
-    });
-  }
+  const category2 = await prisma.category.upsert({
+    where: { name: 'Kebutuhan Dapur' },
+    update: {},
+    create: {
+      name: 'Kebutuhan Dapur',
+      maxAmount: 2000000,
+    },
+  });
 
-  console.log('Seeding selesai!');
+  const user1 = await prisma.user.upsert({
+    where: { email: 'sample@email.com' },
+    update: {},
+    create: {
+      email: 'sample@email.com',
+      name: 'Sample User',
+      password: passwordHash,
+    },
+  });
+
+  const user2 = await prisma.user.upsert({
+    where: { email: 'sample2@email.com' },
+    update: {},
+    create: {
+      email: 'sample2@email.com',
+      name: 'Sample User 2',
+      password: passwordHash,
+    },
+  });
+
+  await prisma.budget.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      description: 'Kontrakan',
+      userId: user2.id,
+      catId: category1.id,
+      type: false,
+      amount: 15000000,
+      date: new Date(),
+    },
+  });
+
+  await prisma.budget.upsert({
+    where: { id: 2 },
+    update: {},
+    create: {
+      description: 'Listrik',
+      userId: user1.id,
+      type: false,
+      amount: 200000,
+      catId: category1.id,
+      date: new Date(),
+    },
+  });
+
+  await prisma.budget.upsert({
+    where: { id: 3 },
+    update: {},
+    create: {
+      description: 'Air',
+      userId: user1.id,
+      type: false,
+      amount: 30000,
+      catId: category1.id,
+      date: new Date(),
+    },
+  });
+  await prisma.budget.upsert({
+    where: { id: 4 },
+    update: {},
+    create: {
+      description: 'Air',
+      userId: user1.id,
+      type: false,
+      amount: 30000,
+      catId: category1.id,
+      date: new Date(),
+    },
+  });
+  await prisma.budget.upsert({
+    where: { id: 5 },
+    update: {},
+    create: {
+      description: 'Popok Alina',
+      userId: user1.id,
+      type: false,
+      amount: 100000,
+      catId: category2.id,
+      date: new Date(),
+    },
+  });
+  await prisma.budget.upsert({
+    where: { id: 6 },
+    update: {},
+    create: {
+      description: 'Gaji',
+      userId: user1.id,
+      type: false,
+      amount: 20000000,
+      catId: categories.id,
+      date: new Date(),
+    },
+  });
 }
+
 main()
-  .catch((e: unknown) => {
-    if (e instanceof Error) {
-      console.error(e.message); // Pastikan hanya menampilkan pesan error
-    } else {
-      console.error('An unknown error occurred', e);
-    }
+  .catch((e) => {
+    console.error(e);
+
     process.exit(1);
   })
+
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   .finally(async () => {
     await prisma.$disconnect();
   });
-

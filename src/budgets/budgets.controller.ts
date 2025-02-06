@@ -18,21 +18,19 @@ import { BudgetEntity } from './entities/budget.entity';
 @Controller('budgets')
 @ApiTags('budget')
 export class BudgetsController {
-  constructor(private readonly budgetsService: BudgetsService) { }
+  constructor(private readonly budgetsService: BudgetsService) {}
 
   @Post()
   @ApiCreatedResponse({ type: BudgetEntity })
   async create(@Body() createBudgetDto: CreateBudgetDto) {
-    return new BudgetEntity(
-      await this.budgetsService.create(createBudgetDto)
-    );
+    return new BudgetEntity(await this.budgetsService.create(createBudgetDto));
   }
 
   @Get()
   @ApiOkResponse({ type: BudgetEntity })
   async findAll() {
     const budget = await this.budgetsService.findAll();
-    return budget.map((bdg) => new BudgetEntity(bdg))
+    return budget.map((bdg) => new BudgetEntity(bdg));
   }
 
   @Get(':id')

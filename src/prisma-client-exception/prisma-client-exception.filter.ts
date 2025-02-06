@@ -16,8 +16,19 @@ export class PrismaClientExceptionFilter extends BaseExceptionFilter {
         const status = HttpStatus.CONFLICT;
         response.status(status).json({
           statusCode: status,
-          message,
+          message: 'Terjadi kesalahan, silahkan coba lagi',
         });
+        console.error(message);
+        break;
+      }
+      case 'P2003': {
+        const status = HttpStatus.BAD_REQUEST;
+        response.status(status).json({
+          statusCode: status,
+          message:
+            'Terjadi kesalahan, data yang dimasukan salah, silahkan coba lagi dengan data yang benar',
+        });
+        console.error(message);
         break;
       }
       default:
