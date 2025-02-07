@@ -17,6 +17,8 @@ jobs:
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
       - name: Install with bun
         run: bun install
+      - name: Generate Prisma Client
+        run: npx prisma generate
       - name: Build package
         run: bun run build
       - name: Build Project Artifacts
