@@ -12,9 +12,6 @@
         "dest": "dist/main.js",
         "methods": ["*"]
       }
-    ],
-    "engines": {
-        "node": "20.x"
-    }
+    ]
   }
   
